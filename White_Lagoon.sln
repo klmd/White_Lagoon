@@ -5,11 +5,11 @@ VisualStudioVersion = 17.8.34212.112
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhiteLagoon.Web", "WhiteLagoon.Web\WhiteLagoon.Web.csproj", "{4B009569-8F10-4665-B7FD-5EEEB5049FE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteLagoon.Domain", "WhiteLagoon.Domain\WhiteLagoon.Domain.csproj", "{2673B393-06DB-4A70-833C-122BCD8D7F6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhiteLagoon.Domain", "WhiteLagoon.Domain\WhiteLagoon.Domain.csproj", "{2673B393-06DB-4A70-833C-122BCD8D7F6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteLagoon.Application", "WhiteLagoon.Application\WhiteLagoon.Application.csproj", "{4F394B6F-10C2-4D7A-A52E-274DE76848FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhiteLagoon.Application", "WhiteLagoon.Application\WhiteLagoon.Application.csproj", "{4F394B6F-10C2-4D7A-A52E-274DE76848FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteLagoon.Infrastructure", "WhiteLagoon.Infrastructure\WhiteLagoon.Infrastructure.csproj", "{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhiteLagoon.Infrastructure", "WhiteLagoon.Infrastructure\WhiteLagoon.Infrastructure.csproj", "{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,20 +17,20 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B009569-8F10-4665-B7FD-5EEEB5049FE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2673B393-06DB-4A70-833C-122BCD8D7F6F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F394B6F-10C2-4D7A-A52E-274DE76848FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BADC4E45-0C8D-4DA0-B193-96EF6416DEA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
