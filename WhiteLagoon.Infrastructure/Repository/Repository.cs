@@ -19,11 +19,42 @@ namespace WhiteLagoon.Infrastructure.Repository
         {
             _db = db;
             dbSet = _db.Set<T>();
-        }             
-
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        }
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                //Villa,VillaNumber -- case sensitive
+                foreach (var includeProp in includeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp.Trim());
+                }
+            }
+            return query.FirstOrDefault();
+        }
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter != null)
+            {
+                query.Where(filter);
+            }
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includeProp in includeProperties.Split(new char[','], StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.ToList();
         }
         public void Add(T entity)
         {
@@ -32,11 +63,6 @@ namespace WhiteLagoon.Infrastructure.Repository
         public void Remove(T entity)
         {
             dbSet.Remove(entity);
-        }
-
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }
