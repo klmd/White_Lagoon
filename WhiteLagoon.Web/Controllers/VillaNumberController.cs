@@ -23,8 +23,8 @@ namespace WhiteLagoon.Web.Controllers
             //seznam Vill s čísly pro tabulku
             //var villaNumbers = _db.VillaNumber.Include(u => u.Villa).ToList();
             //var villaNumbers = _unitOfWork.VillaNumber.GetAll();
-            var villaNumbers = _unitOfWork.VillaNumber.GetAll(includeProperties: "Villa");
-            return View(villaNumbers);
+            var villaNumberVM = _unitOfWork.VillaNumber.GetAll(includeProperties: "Villa");
+            return View(villaNumberVM);
         }
         public IActionResult Create()
         {
