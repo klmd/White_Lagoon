@@ -33,20 +33,19 @@
                                 </label>
                             </div>
                             <div>
-                                <button type="submit" class="w-100 btn btn-lg btn-outline-success">Log in</button>
+                                <button type="submit" asp-controller="Account" asp-action="Login" class="w-100 btn btn-lg btn-outline-success">Log in</button>
                             </div>
                             <div class="d-flex justify-content-between pt-2">
                                 <p>
-                                    <a>Forgot your password?</a>
+                                    <a asp-controller="Account" asp-action="ForgetPassword">Forgot your password?</a>
                                 </p>
                                 <p>
-                                    <a>Register as a new user</a>
+                                    <a asp-controller="Account" asp-action="Register">Register as a new user</a>
                                 </p>
                             </div>
                         </form>
                     </section>
                 </div>
-
             </div>
         </div>
     </div>
