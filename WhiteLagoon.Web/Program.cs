@@ -15,6 +15,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServe
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
+//override of the default path to login and access denied etc.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+//override for password complexity etc.
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    //options.Password.RequireDigit = true;
+    //options.Password.RequireLowercase = true;
+    //options.Password.RequireUppercase = true;
+    //options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    //options.Password.RequiredUniqueChars = 1;
+});
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();

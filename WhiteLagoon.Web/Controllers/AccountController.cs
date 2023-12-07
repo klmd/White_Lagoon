@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Web;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Application.Utility;
 using WhiteLagoon.Domain.Entities;
@@ -23,7 +25,7 @@ namespace WhiteLagoon.Web.Controllers
             _signInManager = signInManager;
             _roleManager = roleManager;
         }
-        public IActionResult Login(string returnUrl=null)
+        public IActionResult Login(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
 
@@ -35,12 +37,11 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginVM loginVM)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe,  lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
@@ -61,8 +62,9 @@ namespace WhiteLagoon.Web.Controllers
             return View(loginVM);
         }
 
-        public IActionResult Register()
+        public IActionResult Register(string returnUrl = null)
         {
+
             if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).Wait();
@@ -75,60 +77,63 @@ namespace WhiteLagoon.Web.Controllers
                 {
                     Text = x.Name,
                     Value = x.Name
-                })
-
+                }),
+                ReturnUrl = returnUrl
             };
             return View(registerVM);
         }
 
         [HttpPost]
-        public async Task <IActionResult> Register(RegisterVM registerVM)
+        public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-            ApplicationUser user = new ApplicationUser
+            if (ModelState.IsValid)
             {
-                Name = registerVM.Email,
-                Email = registerVM.Email,
-                PhoneNumber = registerVM.PhoneNumber,
-                NormalizedEmail = registerVM.Email.ToUpper(),
-                EmailConfirmed = true,
-                UserName = registerVM.Email,
-                CreatedAt = DateTime.Now
-            };
+                ApplicationUser user = new ApplicationUser
+                {
+                    Name = registerVM.Email,
+                    Email = registerVM.Email,
+                    PhoneNumber = registerVM.PhoneNumber,
+                    NormalizedEmail = registerVM.Email.ToUpper(),
+                    EmailConfirmed = true,
+                    UserName = registerVM.Email,
+                    CreatedAt = DateTime.Now
+                };
 
-            var result = await _userManager.CreateAsync(user, registerVM.Password);
+                var result = await _userManager.CreateAsync(user, registerVM.Password);
 
-            if (result.Succeeded)
-            {
-                if (!string.IsNullOrEmpty(registerVM.Role))
+                if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, registerVM.Role);
-                }
-                else
-                {
-                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
-                }
-                await _signInManager.SignInAsync(user, isPersistent: false);
+                    if (!string.IsNullOrEmpty(registerVM.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, registerVM.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    }
+                    await _signInManager.SignInAsync(user, isPersistent: false);
 
-                if (!string.IsNullOrEmpty(registerVM.ReturnUrl))
-                {
-                    return LocalRedirect(registerVM.ReturnUrl);
+                    if (!string.IsNullOrEmpty(registerVM.ReturnUrl))
+                    {
+                        return LocalRedirect(registerVM.ReturnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
-                else
+
+                foreach (var error in result.Errors)
                 {
-                    return RedirectToAction("Index", "Home");
+                    ModelState.AddModelError("", error.Description);
                 }
             }
 
-            foreach (var error in result.Errors)
+            registerVM.RoleList = _roleManager.Roles.Select(x => new SelectListItem
             {
-                ModelState.AddModelError("", error.Description);
-            }
-            
-            registerVM .RoleList = _roleManager.Roles.Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Name
-                });
+                Text = x.Name,
+                Value = x.Name
+            });
 
             return View(registerVM);
         }
@@ -137,6 +142,11 @@ namespace WhiteLagoon.Web.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
