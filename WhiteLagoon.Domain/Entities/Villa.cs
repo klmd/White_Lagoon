@@ -31,5 +31,7 @@ namespace WhiteLagoon.Domain.Entities
 
         [ValidateNever]
         public IEnumerable<Amenity> VillaAmenity { get; set; }
+        [NotMapped]
+        public bool IsAvialable { get; set; } = true;
     }
 }
