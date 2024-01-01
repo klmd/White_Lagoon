@@ -26,13 +26,13 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(HomeVM homeVM)
-        {
-            homeVM.VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
+        //this is not needed because of the ajax call
+        //public IActionResult Index(HomeVM homeVM)
+        //{
+        //    homeVM.VillaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity");
 
-            return View(homeVM);
-        }
-
+        //    return View(homeVM);
+        //}
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             //múže se použít pro spinner by byl alespoò 1s vidìt
