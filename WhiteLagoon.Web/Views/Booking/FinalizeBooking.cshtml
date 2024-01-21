@@ -28,7 +28,13 @@
         </div>
         <div class="col-12 col-lg-5 p-4 2 mt-4 mt-md-0" style="border-left:1px solid #aaa">
             <form method="post">
-                <div class="row pt-1 mb-3 " style="border-radius:20px; ">
+                <input type="hidden" asp-for="VillaId" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="CheckInDate" />
+                <input type="hidden" asp-for="CheckOutDate" />
+                <input type="hidden" asp-for="Nights" />
+
+                <div class="row pt-1 mb-3 " style="border-radius: 20px;">
                     <div class="col-12">
                         <h3 class="text-success">Enter Booking Details</h3>
                     </div>
@@ -70,7 +76,7 @@
                     {
                         <input class="btn btn-danger disabled form-control" value="Sold Out" />
                     }
-                    
+
                 </div>
             </form>
         </div>

@@ -29,20 +29,20 @@ public class Booking
     public string? Status { get; set; }
 
     [Required]
-    public DateOnly BookingDate { get; set; }
+    public DateTime BookingDate { get; set; }
     [Required]
     public DateOnly CheckInDate { get; set; }
     [Required]
     public DateOnly CheckOutDate { get; set; }
     
-    public bool IsPaymentSuccessful { get; set; }
+    public bool IsPaymentSuccessful { get; set; } = false;
     public DateOnly PaymentDate { get; set; }
 
     public string? StripeSessionId { get; set; }
     public string? StripePaymentIntentId { get; set; }
 
-    public DateOnly ActualCheckInDate { get; set; }
-    public DateOnly ActualCheckOutDate { get; set; }
+    public DateTime ActualCheckInDate { get; set; }
+    public DateTime ActualCheckOutDate { get; set; }
 
     public int VillaNumber { get; set; }
 }

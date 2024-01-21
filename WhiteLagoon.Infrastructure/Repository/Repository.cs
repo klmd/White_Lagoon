@@ -45,15 +45,28 @@ namespace WhiteLagoon.Infrastructure.Repository
 
             if (filter != null)
             {
-                query.Where(filter);
+                query = query.Where(filter);
             }
             if (!string.IsNullOrEmpty(includeProperties))
             {
-                foreach (var includeProp in includeProperties.Split(new char[','], StringSplitOptions.RemoveEmptyEntries))
+                foreach (var includeProp in includeProperties
+                             .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    query = query.Include(includeProp);
+                    query = query.Include(includeProp.Trim());
                 }
             }
+
+            //if (filter != null)
+            //{
+            //    query.Where(filter);
+            //}
+            //if (!string.IsNullOrEmpty(includeProperties))
+            //{
+            //    foreach (var includeProp in includeProperties.Split(new char[','], StringSplitOptions.RemoveEmptyEntries))
+            //    {
+            //        query = query.Include(includeProp);
+            //    }
+            //}
             return query.ToList();
         }
         public void Add(T entity)
