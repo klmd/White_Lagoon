@@ -26,7 +26,13 @@
         </div>
         <div class="col-12 col-lg-6 p-4 2 mt-4 mt-md-0" style="border-left:1px solid #aaa">
             <form method="post">
-
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="VillaId" />
+                <input type="hidden" asp-for="VillaNumber" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="CheckInDate" />
+                <input type="hidden" asp-for="CheckOutDate" />
+                <input type="hidden" asp-for="Nights" />
                 <div class="row pt-1 mb-3 " style="border-radius:20px; ">
                     <div class="col-6">
                         <h3 class="text-success">Enter Booking Details</h3>
@@ -34,7 +40,7 @@
                     <div class="col-6">
                         @if ((Model.Status == SD.StatusPending || Model.Status == SD.StatusApproved) && User.IsInRole(SD.Role_Admin))
                         {
-                            <button type="submit" class="btn btn-sm btn-outline-danger form-control my-1"><i class="bi bi-x-circle"></i> &nbsp; Cancel Booking</button>
+                            <button type="submit" asp-controller="Booking" asp-action="CancelBooking" class="btn btn-sm btn-outline-danger form-control my-1"><i class="bi bi-x-circle"></i> &nbsp; Cancel Booking</button>
                         }
                     </div>
                 </div>
@@ -72,45 +78,66 @@
                         <input asp-for="ActualCheckInDate" disabled class="form-control" />
                     </div>
                     <div class="form-group pt-2 col-6">
-                        <label class="text-warning">Check-out Date</label>
+                        <label class="text-danger">Check-out Date</label>
                         <input asp-for="CheckOutDate" disabled class="form-control" />
                     </div>
                     <div class="form-group pt-2 col-6">
                         <label class="text-warning">Actual Check-out Date</label>
                         <input asp-for="ActualCheckOutDate" disabled class="form-control" />
                     </div>
-                    @if (Model.IsPaymentSuccessful && User.IsInRole(SD.Role_Admin))
+                    @if (Model.Status == SD.StatusApproved && User.IsInRole(SD.Role_Admin))
                     {
                         <div class="form-group pt-2 col-6">
-                            <label class="text-warning">Stripe PaymentIntent Id</label>
-                            <input asp-for="StripePaymentIntentId" disabled class="form-control" />
-                        </div>
-                        <div class="form-group pt-2 col-6">
-                            <label class="text-warning">Stripe Session Id</label>
-                            <input asp-for="StripeSessionId" disabled class="form-control" />
-                        </div>
-                        <div class="form-group pt-2 col-6">
-                            <label class="text-warning">Payment Date</label>
-                            <input asp-for="PaymentDate" disabled class="form-control" />
+                            <label class="text-danger" asp-for="VillaNumber"></label>
+                            <select asp-for="VillaNumber" class="form-control">
+                                @foreach (var item in Model.VillaNumbers)
+                                {
+                                    <option value="@item.Villa_Number">@item.Villa_Number</option>
+                                }
+                            </select>
                         </div>
                     }
-                </div>
-                <div class="form-group pt-2 pt-md-4">
-                    @if (User.IsInRole(SD.Role_Admin))
+                    else
                     {
-                        if (Model.Status == SD.StatusApproved)
+                        <input type="hidden" asp-for="VillaNumber" />
+                        if (Model.Status == SD.StatusCompleted || Model.Status == SD.StatusCheckedIn)
                         {
-                            <button type="submit" class="btn btn-warning form-control my-1"><i class="bi bi-check2-square"></i> &nbsp; Check In</button>
+                            <div class="form-group pt-2 col-6">
+                                <label class="text-warning">Villa Number</label>
+                                <input asp-for="VillaNumber" disabled class="form-control" />
+                            </div>
                         }
-                        else if (Model.Status == SD.StatusCheckedIn)
-                        {
-                            <button type="submit" class="btn btn-success form-control my-1"><i class="bi bi-clipboard2-check"></i> &nbsp; Check Out / Complete Booking</button>
-                        }
-                        
-                        
                     }
-                </div>
-            </form>
+                        @if (Model.IsPaymentSuccessful && User.IsInRole(SD.Role_Admin))
+                        {
+                            <div class="form-group pt-2 col-6">
+                                <label class="text-warning">Stripe PaymentIntent Id</label>
+                                <input asp-for="StripePaymentIntentId" disabled class="form-control" />
+                            </div>
+                            <div class="form-group pt-2 col-6">
+                                <label class="text-warning">Stripe Session Id</label>
+                                <input asp-for="StripeSessionId" disabled class="form-control" />
+                            </div>
+                            <div class="form-group pt-2 col-6">
+                                <label class="text-warning">Payment Date</label>
+                                <input asp-for="PaymentDate" disabled class="form-control" />
+                            </div>
+                        }
+                    </div>
+                    <div class="form-group pt-2 pt-md-4">
+                            @if (User.IsInRole(SD.Role_Admin))
+                            {
+                                if (Model.Status == SD.StatusApproved)
+                                {
+                                <button type="submit" asp-controller="Booking" asp-action="CheckIn" class="btn btn-warning form-control my-1"><i class="bi bi-check2-square"></i> &nbsp; Check In</button>
+                                }
+                                else if (Model.Status == SD.StatusCheckedIn)
+                                {
+                            <button type="submit" asp-controller="Booking" asp-action="CheckOut" class="btn btn-success form-control my-1"><i class="bi bi-clipboard2-check"></i> &nbsp; Check Out / Complete Booking</button>
+                                }
+                            }
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
