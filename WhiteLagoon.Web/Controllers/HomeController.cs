@@ -41,8 +41,7 @@ namespace WhiteLagoon.Web.Controllers
             var villaList = _unitOfWork.Villa.GetAll(includeProperties: "VillaAmenity").ToList();
             var villaNumberList = _unitOfWork.VillaNumber.GetAll().ToList();
             var bookedVillas = _unitOfWork.Booking.GetAll(u => u.Status == SD.StatusApproved ||u.Status == SD.StatusCheckedIn).ToList();
-
-
+            
             foreach (var villa in villaList)
             {
                 int roomsAvailable = SD.VillaRoomsAvailable_Count(villa, checkInDate, villaNumberList, nights, bookedVillas);

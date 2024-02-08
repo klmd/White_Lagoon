@@ -45,13 +45,25 @@ namespace WhiteLagoon.Web.Controllers
 
                 if (result.Succeeded)
                 {
-                    if (string.IsNullOrEmpty(loginVM.ReturnUrl))
+                    var user = await _userManager.FindByEmailAsync(loginVM.Email);
+                    if (await _userManager.IsInRoleAsync(user, SD.Role_Admin))
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Dashboard");
                     }
                     else
                     {
-                        return LocalRedirect(loginVM.ReturnUrl);
+                        //{
+                        //    ModelState.AddModelError("", "Email not confirmed");
+                        //    return View(loginVM);
+                        //}
+                        if (string.IsNullOrEmpty(loginVM.ReturnUrl))
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return LocalRedirect(loginVM.ReturnUrl);
+                        }
                     }
                 }
                 else
