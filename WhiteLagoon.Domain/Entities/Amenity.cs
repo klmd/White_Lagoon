@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,8 +14,10 @@ namespace WhiteLagoon.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
+
         public required string Name { get; set; }
         public string? Description { get; set; }
+
 
         [ForeignKey("Villa")]
         public int VillaId { get; set; }

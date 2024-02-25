@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using Syncfusion.Licensing;
 using WhiteLagoon.Application.Common.Interfaces;
+using WhiteLagoon.Application.Common.Services.Implementation;
+using WhiteLagoon.Application.Common.Services.Interfaces;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 using WhiteLagoon.Infrastructure.Repository;
@@ -35,12 +38,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IDbinitializer, Dbinitializer>();
 
 var app = builder.Build();
 
 //stripe payment registering into application - první øádek generován copiloten je Ok?
 //StripeConfiguration.ApiKey = app.Configuration.GetSection("Stripe")["SecretKey"];
 StripeConfiguration.ApiKey = app.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+SyncfusionLicenseProvider.RegisterLicense(builder.Configuration.GetSection("Syncfusion:Licensekey").Get<String>());
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -56,9 +62,19 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+SeedDatabase();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+
+void SeedDatabase()
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var dbInitializer = services.GetRequiredService<IDbinitializer>();
+    dbInitializer.Initialize();
+}

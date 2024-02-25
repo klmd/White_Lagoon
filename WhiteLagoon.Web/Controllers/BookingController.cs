@@ -1,7 +1,13 @@
-﻿using System.Security.Claims;
+﻿using System.Globalization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.DocIORenderer;
+using Syncfusion.Drawing;
+using Syncfusion.Pdf;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Application.Utility;
 using WhiteLagoon.Domain.Entities;
@@ -12,10 +18,12 @@ namespace WhiteLagoon.Web.Controllers
     public class BookingController : Controller
     {
         public readonly IUnitOfWork _unitOfWork;
+        public readonly IWebHostEnvironment _hostEnvironment;
 
-        public BookingController(IUnitOfWork unitOfWork)
+        public BookingController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _hostEnvironment = hostEnvironment;
         }
         [Authorize]
         public IActionResult Index()
@@ -37,7 +45,7 @@ namespace WhiteLagoon.Web.Controllers
                 Villa = _unitOfWork.Villa.Get(u => u.Id==villaId, includeProperties:"VillaAmenity"),
                 CheckInDate = checkInDate,
                 Nights = nights,
-                CheckOutDate = checkInDate.AddDays(nights), //proč toto nefunguje v kookingdetails.cshtml a FinalizeBooking.cshtml
+                CheckOutDate = checkInDate.AddDays(nights), //proč toto nefunguje v kookingdetails.cshtml a FinalizeBooking.cshtml - jak naformatovat checkindate aby to fungovalo (lokální formátování)
                 UserId = userId,
                 Phone = user.PhoneNumber,
                 Email = user.Email,
@@ -155,6 +163,157 @@ namespace WhiteLagoon.Web.Controllers
             }
 
             return View(bookingFromDb);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult GenerateInvoice(int Id, string downloadType)
+        {
+            string basePath = _hostEnvironment.WebRootPath;
+            
+            WordDocument document = new WordDocument();
+            
+            //Loading the template document
+            string dataPath = basePath + @"/exports/BookingDetails.docx";
+            using FileStream fileStream = new (dataPath, FileMode.Open, FileAccess.Read,FileShare.ReadWrite);
+            document.Open(fileStream, FormatType.Automatic);
+            
+            //update the template document
+            Booking bookingFromDb = _unitOfWork.Booking.Get(u => u.Id == Id, includeProperties: "User, Villa");
+            
+            //update name
+            TextSelection textSelection = document.Find("xx_customer_name", false, true);
+            WTextRange textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.Name;
+
+            //update phone
+            textSelection = document.Find("xx_customer_phone", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.Phone;
+
+            //update email
+            textSelection = document.Find("xx_customer_email", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.Email;
+
+            //update booking number
+            textSelection = document.Find("XX_BOOKING_NUMBER", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = "BOOKING NR. - " + bookingFromDb.Id.ToString();
+
+            //update booking Date
+            textSelection = document.Find("XX_BOOKING_DATE", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = "BOOKING DATE - " + bookingFromDb.BookingDate.ToShortDateString();
+
+            //update payment Date
+            textSelection = document.Find("xx_payment_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.PaymentDate.ToShortDateString();
+
+            //update CheckIn Date
+            textSelection = document.Find("xx_checkin_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.CheckInDate.ToShortDateString();
+
+            //update CheckOut Date
+            textSelection = document.Find("xx_checkout_date", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.CheckOutDate.ToShortDateString();
+
+            //update Billing Total
+            textSelection = document.Find("xx_booking_total", false, true);
+            textRange = textSelection.GetAsOneRange();
+            textRange.Text = bookingFromDb.TotalCost.ToString("C");
+
+            WTable table = new (document);
+            table.TableFormat.Borders.LineWidth = 1F;
+            table.TableFormat.BackColor = Color.Black;
+            table.TableFormat.Paddings.Top = 7f;
+            table.TableFormat.Paddings.Bottom = 7f;
+            table.TableFormat.Borders.Horizontal.LineWidth = 1F;
+            
+            //Adding a new row to the table
+            int rows = bookingFromDb.VillaNumber > 0 ? 3 : 2;
+            table.ResetCells(rows, 4);
+            
+            WTableRow row0 = table.Rows[0];
+
+            row0.Cells[0].AddParagraph().AppendText("Nights");
+            row0.Cells[0].Width = 80;
+            row0.Cells[1].AddParagraph().AppendText("Villa");
+            row0.Cells[1].Width = 220;
+            row0.Cells[2].AddParagraph().AppendText("Price per Night");
+            row0.Cells[3].AddParagraph().AppendText("Total");
+            row0.Cells[3].Width = 80;
+
+            WTableRow row1 = table.Rows[1];
+
+            row1.Cells[0].AddParagraph().AppendText(bookingFromDb.Nights.ToString());
+            row1.Cells[0].Width = 80;
+            row1.Cells[1].AddParagraph().AppendText(bookingFromDb.Villa.Name);
+            row1.Cells[1].Width = 220;
+            row1.Cells[2].AddParagraph().AppendText((bookingFromDb.TotalCost/bookingFromDb.Nights).ToString("C"));
+            row1.Cells[3].AddParagraph().AppendText(bookingFromDb.TotalCost.ToString("C"));
+            row1.Cells[3].Width = 80;
+            
+            if (bookingFromDb.VillaNumber > 0)
+            {
+                WTableRow row2 = table.Rows[2];
+
+                row2.Cells[0].Width = 80;
+                row2.Cells[1].AddParagraph().AppendText("Villa Number - " + bookingFromDb.VillaNumber.ToString());
+                row2.Cells[1].Width = 220;
+                row2.Cells[3].Width = 80;
+            }
+
+            //Adding the table style
+            WTableStyle tableStyle = document.AddTableStyle("CustomStyle") as WTableStyle;
+            tableStyle.TableProperties.RowStripe = 1;
+            tableStyle.TableProperties.ColumnStripe = 2;
+            tableStyle.TableProperties.Paddings.Top = 2;
+            tableStyle.TableProperties.Paddings.Bottom = 1;
+            tableStyle.TableProperties.Paddings.Left = 5.4f;
+            tableStyle.TableProperties.Paddings.Right = 5.4f;
+            //tableStyle.CharacterFormat.TextColor = Color.Black;
+            
+            ConditionalFormattingStyle firstRowStyle = tableStyle.ConditionalFormattingStyles.Add(ConditionalFormattingType.FirstRow);
+
+            ConditionalFormattingStyle lastRowStyle = tableStyle.ConditionalFormattingStyles.Add(ConditionalFormattingType.LastRow);
+
+            firstRowStyle.CharacterFormat.Bold = true;
+            firstRowStyle.CharacterFormat.TextColor = Color.FromArgb(255, 255, 255, 255);
+            firstRowStyle.CellProperties.BackColor = Color.Black;
+
+            lastRowStyle.CharacterFormat.TextColor = Color.Brown;
+            
+            table.ApplyStyle("CustomStyle");
+            
+            
+            TextBodyPart bodyPart = new TextBodyPart(document);
+            bodyPart.BodyItems.Add(table);
+
+            document.Replace("<ADDTABLEHERE>", bodyPart, false, false);
+
+
+
+            using DocIORenderer renderer = new DocIORenderer();
+            MemoryStream stream = new MemoryStream();
+            
+            if (downloadType == "word")
+            {
+                document.Save(stream, FormatType.Docx);
+                stream.Position = 0;
+                return File(stream, "application/docx", "BookingDetails.docx");
+            }
+            else
+            {
+                PdfDocument pdfDocument = renderer.ConvertToPDF(document);
+                
+                pdfDocument.Save(stream);
+                stream.Position = 0;
+                return File(stream, "application/pdf", "BookingDetails.pdf");
+            }
         }
 
         [HttpPost]

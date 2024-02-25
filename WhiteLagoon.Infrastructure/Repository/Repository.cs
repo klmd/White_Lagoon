@@ -20,9 +20,17 @@ namespace WhiteLagoon.Infrastructure.Repository
             _db = db;
             dbSet = _db.Set<T>();
         }
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
 
             if (filter != null)
             {
@@ -39,10 +47,17 @@ namespace WhiteLagoon.Infrastructure.Repository
             }
             return query.FirstOrDefault();
         }
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties, bool tracked = false)
         {
-            IQueryable<T> query = dbSet;
-
+            IQueryable<T> query;
+            if (tracked)
+            {
+                query = dbSet;
+            }
+            else
+            {
+                query = dbSet.AsNoTracking();
+            }
             if (filter != null)
             {
                 query = query.Where(filter);
