@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhiteLagoon.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using WhiteLagoon.Infrastructure.Data;
 namespace WhiteLagoon.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240225143907_afterErasingMigrationFolder")]
+    partial class afterErasingMigrationFolder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,67 +187,67 @@ namespace WhiteLagoon.Infrastructure.Migrations
                         {
                             Id = 1,
                             Name = "Private Pool",
-                            VillaId = 3
+                            VillaId = 1
                         },
                         new
                         {
                             Id = 2,
                             Name = "Microwave",
-                            VillaId = 3
+                            VillaId = 1
                         },
                         new
                         {
                             Id = 3,
                             Name = "Private Balcony",
-                            VillaId = 3
+                            VillaId = 1
                         },
                         new
                         {
                             Id = 4,
                             Name = "1 king bed and 1 sofa bed",
-                            VillaId = 3
+                            VillaId = 1
                         },
                         new
                         {
                             Id = 5,
                             Name = "Private Plunge Pool",
-                            VillaId = 10
+                            VillaId = 2
                         },
                         new
                         {
                             Id = 6,
                             Name = "Microwave and Mini Refrigerator",
-                            VillaId = 10
+                            VillaId = 2
                         },
                         new
                         {
                             Id = 7,
                             Name = "Private Balcony",
-                            VillaId = 10
+                            VillaId = 2
                         },
                         new
                         {
                             Id = 8,
                             Name = "king bed or 2 double beds",
-                            VillaId = 10
+                            VillaId = 2
                         },
                         new
                         {
                             Id = 9,
                             Name = "Private Pool",
-                            VillaId = 11
+                            VillaId = 3
                         },
                         new
                         {
                             Id = 10,
                             Name = "Jacuzzi",
-                            VillaId = 11
+                            VillaId = 3
                         },
                         new
                         {
                             Id = 11,
                             Name = "Private Balcony",
-                            VillaId = 11
+                            VillaId = 3
                         });
                 });
 
@@ -328,14 +331,14 @@ namespace WhiteLagoon.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateOnly>("ActualCheckInDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("ActualCheckInDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("ActualCheckOutDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("ActualCheckOutDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("BookingDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateOnly>("CheckInDate")
                         .HasColumnType("date");
@@ -490,12 +493,42 @@ namespace WhiteLagoon.Infrastructure.Migrations
                         },
                         new
                         {
+                            Villa_Number = 102,
+                            VillaId = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 103,
+                            VillaId = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 104,
+                            VillaId = 1
+                        },
+                        new
+                        {
                             Villa_Number = 201,
                             VillaId = 2
                         },
                         new
                         {
+                            Villa_Number = 202,
+                            VillaId = 2
+                        },
+                        new
+                        {
+                            Villa_Number = 203,
+                            VillaId = 2
+                        },
+                        new
+                        {
                             Villa_Number = 301,
+                            VillaId = 3
+                        },
+                        new
+                        {
+                            Villa_Number = 302,
                             VillaId = 3
                         });
                 });
