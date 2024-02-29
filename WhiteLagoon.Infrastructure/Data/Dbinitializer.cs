@@ -14,8 +14,8 @@ public class Dbinitializer : IDbinitializer
 
     public Dbinitializer(ApplicationDbContext db, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
     {
-        roleManager = _roleManager;
-        userManager = _userManager;
+        _roleManager = roleManager;
+        _userManager = userManager;
         _db = db;
     }
     public void Initialize()
